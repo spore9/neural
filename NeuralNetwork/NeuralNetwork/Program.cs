@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ANN;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NeuralNetwork
+namespace ArtificialNeuralNetwork.Program
 {
     static class Program
     {

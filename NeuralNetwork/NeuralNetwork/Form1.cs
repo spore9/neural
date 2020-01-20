@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Single;
+using ANN;
 
-namespace ANN
+namespace ArtificialNeuralNetwork.Program
 {
     public partial class Form1 : Form
     {
@@ -122,7 +123,7 @@ namespace ANN
                 }
             }
             network.ForwardPropagation();
-            List<double> Answer = network.GetAswer();
+            List<float> Answer = network.GetAswer();
             for (int i = 0; i < network.GetOutputs(); i++)
                 dataGridView2[0, i].Value = Answer[i];
         }
@@ -140,8 +141,8 @@ namespace ANN
                 int m = 0;
                 float a = 0;
                 float lambda = 0;
-                List<List<double>> X = new List<List<double>>();
-                List<List<double>> Y = new List<List<double>>();
+                List<List<float>> X = new List<List<float>>();
+                List<List<float>> Y = new List<List<float>>();
                 if (textBox5.Text != "")
                     a = float.Parse(textBox5.Text);
                 if (textBox7.Text != "")
@@ -150,8 +151,8 @@ namespace ANN
                     iterations = int.Parse(textBox6.Text);
                 while (!sr.EndOfStream)
                 {
-                    X.Add(new List<double>());
-                    Y.Add(new List<double>());
+                    X.Add(new List<float>());
+                    Y.Add(new List<float>());
                     string[] str = sr.ReadLine().Split(separator);
                     for (int j = 0; j < network.GetInputs() - 1; j++)
                     {
@@ -196,7 +197,7 @@ namespace ANN
                 int TruePositive = 0;
                 int FalsePositive = 0;
                 int FalseNegative = 0;
-                List<double> Y = new List<double>();
+                List<float> Y = new List<float>();
                 while (!sr.EndOfStream)
                 {
                     m++;
@@ -208,7 +209,7 @@ namespace ANN
                     }
                     network.Inputs = X;
                     network.ForwardPropagation();
-                    List<double> h = network.GetAswer();
+                    List<float> h = network.GetAswer();
                     double diff = 0;
                     for (int j = 0; j < network.GetOutputs(); j++)
                     {
@@ -296,7 +297,7 @@ namespace ANN
                         {
                             network.Inputs = X;
                             network.ForwardPropagation();
-                            List<double> results = network.GetAswer();
+                            List<float> results = network.GetAswer();
                             X[X.Count - 10] = (float)(i) / maxDays;
                             dayWeek++;
                             if (dayWeek > 6)
@@ -317,7 +318,7 @@ namespace ANN
                         return;
                     }
                     network.ForwardPropagation();
-                    List<double> h = network.GetAswer();
+                    List<float> h = network.GetAswer();
                     float diff = 0;
                     for (int j = 0; j < network.GetOutputs(); j++)
                     {
@@ -491,6 +492,7 @@ namespace ANN
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -536,94 +538,102 @@ namespace ANN
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(69, 32);
+            this.button1.Location = new System.Drawing.Point(12, 58);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
+            this.button1.Text = "Create";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(422, 32);
+            this.button2.Location = new System.Drawing.Point(12, 118);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 1;
-            this.button2.Text = "button2";
+            this.button2.Text = "Get Answer";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(86, 102);
+            this.button3.Location = new System.Drawing.Point(103, 58);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 2;
-            this.button3.Text = "button3";
+            this.button3.Text = "Teach ANN";
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(422, 101);
+            this.button4.Location = new System.Drawing.Point(195, 58);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 3;
-            this.button4.Text = "button4";
+            this.button4.Text = "Test";
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(86, 149);
+            this.button5.Location = new System.Drawing.Point(291, 58);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(75, 23);
             this.button5.TabIndex = 4;
-            this.button5.Text = "button5";
+            this.button5.Text = "Predict";
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(422, 148);
+            this.button6.Location = new System.Drawing.Point(103, 118);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 5;
-            this.button6.Text = "button6";
+            this.button6.Text = "SaveANN";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(86, 213);
+            this.button7.Location = new System.Drawing.Point(195, 118);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(75, 23);
             this.button7.TabIndex = 6;
-            this.button7.Text = "button7";
+            this.button7.Text = "Load ANN";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(422, 212);
+            this.button8.Location = new System.Drawing.Point(291, 118);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(75, 23);
             this.button8.TabIndex = 7;
-            this.button8.Text = "button8";
+            this.button8.Text = "Stop";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(81, 312);
+            this.checkBox1.Location = new System.Drawing.Point(515, 63);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(80, 17);
+            this.checkBox1.Size = new System.Drawing.Size(94, 17);
             this.checkBox1.TabIndex = 8;
-            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.Text = "Predict by one";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(422, 312);
+            this.checkBox2.Location = new System.Drawing.Point(515, 35);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(80, 17);
+            this.checkBox2.Size = new System.Drawing.Size(85, 17);
             this.checkBox2.TabIndex = 9;
-            this.checkBox2.Text = "checkBox2";
+            this.checkBox2.Text = "Is regression";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
@@ -645,110 +655,110 @@ namespace ANN
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(69, 13);
+            this.label1.Location = new System.Drawing.Point(9, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(36, 13);
             this.label1.TabIndex = 12;
-            this.label1.Text = "label1";
+            this.label1.Text = "Inputs";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(422, 13);
+            this.label2.Location = new System.Drawing.Point(134, 13);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
+            this.label2.Size = new System.Drawing.Size(44, 13);
             this.label2.TabIndex = 13;
-            this.label2.Text = "label2";
+            this.label2.Text = "Outputs";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(86, 83);
+            this.label3.Location = new System.Drawing.Point(246, 13);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(35, 13);
+            this.label3.Size = new System.Drawing.Size(38, 13);
             this.label3.TabIndex = 14;
-            this.label3.Text = "label3";
+            this.label3.Text = "Layers";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(422, 82);
+            this.label4.Location = new System.Drawing.Point(373, 13);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.Size = new System.Drawing.Size(47, 13);
             this.label4.TabIndex = 15;
-            this.label4.Text = "label4";
+            this.label4.Text = "Neurons";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(85, 132);
+            this.label5.Location = new System.Drawing.Point(385, 63);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.Size = new System.Drawing.Size(34, 13);
             this.label5.TabIndex = 16;
-            this.label5.Text = "label5";
+            this.label5.Text = "Alpha";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(422, 129);
+            this.label6.Location = new System.Drawing.Point(385, 104);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.Size = new System.Drawing.Size(50, 13);
             this.label6.TabIndex = 17;
-            this.label6.Text = "label6";
+            this.label6.Text = "Iterations";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(89, 194);
+            this.label7.Location = new System.Drawing.Point(385, 145);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(35, 13);
+            this.label7.Size = new System.Drawing.Size(45, 13);
             this.label7.TabIndex = 18;
-            this.label7.Text = "label7";
+            this.label7.Text = "Lambda";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(425, 193);
+            this.label8.Location = new System.Drawing.Point(512, 13);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(35, 13);
+            this.label8.Size = new System.Drawing.Size(39, 13);
             this.label8.TabIndex = 19;
-            this.label8.Text = "label8";
+            this.label8.Text = "Modes";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(83, 296);
+            this.label9.Location = new System.Drawing.Point(55, 335);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(35, 13);
+            this.label9.Size = new System.Drawing.Size(36, 13);
             this.label9.TabIndex = 20;
-            this.label9.Text = "label9";
+            this.label9.Text = "Inputs";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(425, 296);
+            this.label10.Location = new System.Drawing.Point(387, 202);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 13);
+            this.label10.Size = new System.Drawing.Size(48, 13);
             this.label10.TabIndex = 21;
-            this.label10.Text = "label10";
+            this.label10.Text = "Iteration:";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(81, 336);
+            this.label11.Location = new System.Drawing.Point(387, 226);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(41, 13);
+            this.label11.Size = new System.Drawing.Size(32, 13);
             this.label11.TabIndex = 22;
-            this.label11.Text = "label11";
+            this.label11.Text = "Loss:";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(422, 335);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(41, 13);
+            this.label12.Size = new System.Drawing.Size(44, 13);
             this.label12.TabIndex = 23;
-            this.label12.Text = "label12";
+            this.label12.Text = "Outputs";
             // 
             // openFileDialog1
             // 
@@ -756,14 +766,14 @@ namespace ANN
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(86, 258);
+            this.textBox1.Location = new System.Drawing.Point(12, 32);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 24;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(422, 257);
+            this.textBox2.Location = new System.Drawing.Point(131, 32);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 20);
             this.textBox2.TabIndex = 25;
@@ -782,35 +792,35 @@ namespace ANN
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(61, 534);
+            this.textBox3.Location = new System.Drawing.Point(249, 32);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 20);
             this.textBox3.TabIndex = 26;
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(402, 534);
+            this.textBox4.Location = new System.Drawing.Point(366, 32);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(100, 20);
             this.textBox4.TabIndex = 27;
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(69, 593);
+            this.textBox5.Location = new System.Drawing.Point(388, 79);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(100, 20);
             this.textBox5.TabIndex = 28;
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(402, 592);
+            this.textBox6.Location = new System.Drawing.Point(388, 120);
             this.textBox6.Name = "textBox6";
             this.textBox6.Size = new System.Drawing.Size(100, 20);
             this.textBox6.TabIndex = 29;
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(61, 657);
+            this.textBox7.Location = new System.Drawing.Point(388, 161);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(100, 20);
             this.textBox7.TabIndex = 30;
@@ -821,19 +831,23 @@ namespace ANN
             this.chart1.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(528, 32);
+            this.chart1.Location = new System.Drawing.Point(645, 29);
             this.chart1.Name = "chart1";
             series1.ChartArea = "ChartArea1";
             series1.Legend = "Legend1";
             series1.Name = "Series1";
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series2";
             this.chart1.Series.Add(series1);
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(300, 300);
             this.chart1.TabIndex = 31;
             this.chart1.Text = "chart1";
             // 
             // Form1
             // 
-            this.ClientSize = new System.Drawing.Size(798, 762);
+            this.ClientSize = new System.Drawing.Size(798, 541);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.textBox7);
             this.Controls.Add(this.textBox6);

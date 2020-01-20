@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Single;
 
 namespace ANN
 {
     [Serializable]
-    class NeuralNetwork
+    public class NeuralNetwork
     {
         float lambda = 1; //коэффициент регуляризации
         int m = 0; //количество обучающих примеров
@@ -17,7 +17,7 @@ namespace ANN
         int epoch = 0;
         float a = 0.0001f; //скорость обучения
         private List<Layer> _layers; //слои
-        public Vector<double> Inputs; //входные значения
+        public Vector<float> Inputs; //входные значения
         private bool _stop;
         public void ForwardPropagation()
         {
@@ -62,7 +62,7 @@ namespace ANN
                 List<SparseVector> h = new List<SparseVector>();
                 List<List<SparseVector>> activations = new List<List<SparseVector>>();
                 SparseMatrix newX = X;
-                OnNewIteration(i, J);
+                OnNewIteration?.Invoke(i, J);
                 /*if (i%epoch==0)
                 {
                     int butchNumbers = (int)Math.Ceiling((double)(m / butchSize));
@@ -144,7 +144,7 @@ namespace ANN
                 }
             }
         } //конструктор
-        public List<double> GetAswer()
+        public List<float> GetAswer()
         {
             return _layers.Last().Activations.ToList();
         } //Получить результат
@@ -208,7 +208,7 @@ namespace ANN
         } //Получение J для оценки правильности обучения
         private List<SparseMatrix> getDerivatives(SparseMatrix Y, SparseMatrix X, List<List<SparseVector>> activations)
         {
-            List<Vector<double>> delta = new List<Vector<double>>();
+            List<Vector<float>> delta = new List<Vector<float>>();
             List<SparseMatrix> D = new List<SparseMatrix>();
             for (int i = 0; i < _layers.Count; i++)
             {
@@ -216,7 +216,7 @@ namespace ANN
             }
             for (int k = 0; k < m; k++)
             {
-                delta = new List<Vector<double>>();
+                delta = new List<Vector<float>>();
                 for (int i = 0; i < _layers.Count; i++)
                 {
                     delta.Add(new SparseVector(_layers[i].Activations.Count));
@@ -234,7 +234,7 @@ namespace ANN
                     }
                     if (i == 0)
                     {
-                        Vector<double> tempVector = SparseVector.Create(X.Row(k).Count, 1);
+                        Vector<float> tempVector = SparseVector.Create(X.Row(k).Count, 1);
                         if (tempVector.Count != D[i].ColumnCount)
                         {
                             SparseVector tmp = SparseVector.Create(D[i].ColumnCount, 1);
@@ -242,7 +242,7 @@ namespace ANN
                                 tmp[j] = X.Row(k)[j - 1];
                             tempVector = tmp;
                         }
-                        Matrix<double> tempMatrix = delta[i].OuterProduct(tempVector);
+                        Matrix<float> tempMatrix = delta[i].OuterProduct(tempVector);
                         D[i] = D[i] + (SparseMatrix)(tempMatrix);
                     }
                 }
@@ -275,12 +275,12 @@ namespace ANN
             {
                 //activation[i] = (float)(1 / (1 + Math.Exp(-activation[i])));  // сигмоида
                 //activation[i] = Math.Log(1 + Math.Exp(activation[i]));        // ReLU
-                activation[i] = Math.Tanh(activation[i]);                       // Гиперболический тангенс
+                activation[i] = (float)Math.Tanh(activation[i]);                       // Гиперболический тангенс
             }
         } //Получение сигмоды
-        private Vector<double> multiplayOnSigmoidGradient(Vector<double> delta, Vector<double> activations)
+        private Vector<float> multiplayOnSigmoidGradient(Vector<float> delta, Vector<float> activations)
         {
-            Vector<double> tmp = DenseVector.Create(delta.Count-1,0);
+            Vector<float> tmp = DenseVector.Create(delta.Count-1,0);
             for (int i = 1; i < delta.Count; i++)
                 tmp[i-1] = (delta[i] * activations[i] * (1 - activations[i]));
             return tmp;

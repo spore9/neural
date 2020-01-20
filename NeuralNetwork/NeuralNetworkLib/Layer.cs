@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Double;
+using MathNet.Numerics.LinearAlgebra.Single;
 using MathNet.Numerics.Distributions;
 
 namespace ANN
@@ -18,7 +18,7 @@ namespace ANN
         public Layer(int countInputs, int countOutput)
         {
             double coefficient = Math.Sqrt(6d) / Math.Sqrt(countInputs + countOutput);
-            Weights =  (SparseMatrix)SparseMatrix.Build.SparseOfMatrix(Matrix<double>.Build.Random(countOutput, countInputs + 1, new ContinuousUniform(-coefficient, coefficient)));
+            Weights =  (SparseMatrix)SparseMatrix.Build.SparseOfMatrix(Matrix<float>.Build.Random(countOutput, countInputs + 1, new ContinuousUniform(-coefficient, coefficient)));
             Activations = new SparseVector(countOutput+1);
             Activations[0]=1; //Bias
         }
