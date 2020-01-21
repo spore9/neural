@@ -8,7 +8,7 @@
         Title="MainWindow" Height="470.4" Width="800">
     <Grid>
         <TextBox x:Name="InputsTextBox" HorizontalAlignment="Left" Height="23" Margin="30,34,0,0" TextWrapping="Wrap" Text="1024" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="OutputsTextBox" HorizontalAlignment="Left" Height="23" Margin="199,34,0,0" TextWrapping="Wrap" Text="62" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="OutputsTextBox" HorizontalAlignment="Left" Height="23" Margin="199,34,0,0" TextWrapping="Wrap" Text="78" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="LayersTextBox" HorizontalAlignment="Left" Height="23" Margin="359,34,0,0" TextWrapping="Wrap" Text="2" VerticalAlignment="Top" Width="120"/>
         <TextBox x:Name="NeuronsTextBox" HorizontalAlignment="Left" Height="23" Margin="521,34,0,0" TextWrapping="Wrap" Text="64" VerticalAlignment="Top" Width="120"/>
         <Label Content="Inputs" HorizontalAlignment="Left" Margin="30,10,0,0" VerticalAlignment="Top"/>
@@ -27,7 +27,9 @@
         <TextBox x:Name="AnswerTextBox" HorizontalAlignment="Left" Height="268" Margin="199,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="575"/>
         <Button x:Name="LoadButton" Content="Load" HorizontalAlignment="Left" Margin="110,102,0,0" VerticalAlignment="Top" Width="75" Click="LoadButton_Click"/>
         <Label x:Name="ProgressLabel" Content="Progress:" HorizontalAlignment="Left" Margin="10,189,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="GuessText" Content="GuessText" HorizontalAlignment="Left" Margin="110,138,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="GuessText" Content="GuessText" HorizontalAlignment="Left" Margin="110,138,0,0" VerticalAlignment="Top" Width="75" Click="GuessText_Click"/>
+        <Button x:Name="StopButton" Content="Stop" HorizontalAlignment="Left" Margin="10,235,0,0" VerticalAlignment="Top" Width="75" Click="StopButton_Click"/>
+        <Button Content="BuildChart" HorizontalAlignment="Left" Margin="110,174,0,0" VerticalAlignment="Top" Width="75" IsCancel="True" Click="Button_Click_1"/>
 
     </Grid>
 </Window>

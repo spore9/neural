@@ -19,6 +19,58 @@ namespace ANN
         private List<Layer> _layers; //слои
         public Vector<float> Inputs; //входные значения
         private bool _stop;
+        public List<float> Recognise(List<float> input)
+        {
+            List<float> result = new List<float>();
+            Inputs = DenseVector.OfArray(input.ToArray());
+            ForwardPropagation();
+            result = GetAswer();
+            return result;
+        }
+        private List<float> forward(SparseVector input)
+        {
+            Layer[] tempLayers = new Layer[_layers.Count];
+            _layers.CopyTo(tempLayers);
+            for (int i = 0; i < tempLayers.Length; i++)
+            {
+                if (i == 0)
+                {
+                    if (input.Count != tempLayers[i].Weights.ColumnCount)
+                    {
+                        SparseVector tmp = SparseVector.Create(tempLayers[i].Weights.ColumnCount, 1);
+                        for (int j = 1; j < tmp.Count; j++)
+                            tmp[j] = input[j - 1];
+                        input = tmp;
+                    }
+                    tempLayers[i].Activations = SparseVector.OfVector((tempLayers[i].Weights * input));
+                }
+                else
+                {
+                    if (tempLayers[i].Weights.ColumnCount != tempLayers[i - 1].Activations.Count)
+                    {
+                        SparseVector tmp = SparseVector.Create(tempLayers[i].Weights.ColumnCount, 1);
+                        for (int j = 1; j < tmp.Count; j++)
+                            tmp[j] = tempLayers[i - 1].Activations[j - 1];
+                        tempLayers[i - 1].Activations = tmp;
+                    }
+                    else
+                        tempLayers[i - 1].Activations[0] = 1;
+                    tempLayers[i].Activations = SparseVector.OfVector((tempLayers[i].Weights * tempLayers[i - 1].Activations));
+                }
+                tempLayers[i].Activations = parallelSigmoid(tempLayers[i].Activations);
+            }
+           return _layers.Last().Activations.ToList();
+        }
+        private SparseVector parallelSigmoid(SparseVector activation)
+        {
+            for (int i = 0; i < activation.Count; i++)
+            {
+                //activation[i] = (float)(1 / (1 + Math.Exp(-activation[i])));  // сигмоида
+                //activation[i] = Math.Log(1 + Math.Exp(activation[i]));        // ReLU
+                activation[i] = (float)Math.Tanh(activation[i]);                       // Гиперболический тангенс
+            }
+            return activation;
+        } //Получение сигмоды
         public void ForwardPropagation()
         {
             for (int i = 0; i < _layers.Count; i++)
